@@ -78,6 +78,8 @@ class RobotModeData(object):
             return RobotModeData_V18.unpack(buf)
         elif plen == 38:
             return RobotModeData_V30.unpack(buf)
+        elif plen == 46:
+            return RobotModeData_V32.unpack(buf)
         else:
             print "RobotModeData has wrong length: " + str(plen)
             return rmd
@@ -115,7 +117,25 @@ class RobotModeData_V30(object):
          rmd.target_speed_fraction, rmd.speed_scaling) = struct.unpack_from("!IBQ???????BBdd", buf)
         return rmd
 
-#this parses JointData for all versions (i.e. 1.6, 1.7, 1.8, 3.0)
+#this parses RobotModeData for versions >=3.2 (i.e. 3.2)
+class RobotModeData_V32(object):
+    __slots__ = ['timestamp', 'robot_connected', 'real_robot_enabled',
+                 'power_on_robot', 'emergency_stopped',
+                 'security_stopped', 'program_running', 'program_paused',
+                 'robot_mode', 'control_mode', 'target_speed_fraction',
+                 'speed_scaling', 'target_speed_fraction_limit']
+    @staticmethod
+    def unpack(buf):
+        rmd = RobotModeData_V32()
+        (_, _,
+         rmd.timestamp, rmd.robot_connected, rmd.real_robot_enabled,
+         rmd.power_on_robot, rmd.emergency_stopped, rmd.security_stopped,
+         rmd.program_running, rmd.program_paused, rmd.robot_mode, rmd.control_mode,
+         rmd.target_speed_fraction, rmd.speed_scaling, rmd.target_speed_fraction_limit
+         ) = struct.unpack_from("!IBQ???????BBddd", buf)
+        return rmd
+
+#this parses JointData for all versions (i.e. 1.6, 1.7, 1.8, 3.0, 3.1, 3.2)
 class JointData(object):
     __slots__ = ['q_actual', 'q_target', 'qd_actual',
                  'I_actual', 'V_actual', 'T_motor', 'T_micro', 'joint_mode']
@@ -132,7 +152,7 @@ class JointData(object):
             all_joints.append(jd)
         return all_joints
 
-#this parses JointData for all versions (i.e. 1.6, 1.7, 1.8, 3.0)
+#this parses ToolData for all versions (i.e. 1.6, 1.7, 1.8, 3.0)
 class ToolData(object):
     __slots__ = ['analog_input_range2', 'analog_input_range3',
                  'analog_input2', 'analog_input3',
@@ -156,8 +176,10 @@ class MasterboardData(object):
         (plen, ptype) = struct.unpack_from("!IB", buf)
         if (plen == 64) or (plen == 76): # Euromap67 interface = 12 bytes
             return MasterboardData_V18.unpack(buf)
-        elif (plen == 72) or (plen == 92): # Euromap67 interface = 20 bytes
+        elif (plen == 72) or (plen == 92): # Euromap67 interface = 20 bytes <- Isn't it 16??
             return MasterboardData_V30.unpack(buf)
+        elif (plen == 74) or (plen == 94): # Euromap67 interface = 20 bytes <- Isn't it 16??
+            return MasterboardData_V32.unpack(buf)
         else:
             print "MasterboardData has wrong length: " + str(plen)
             print "Euromap67Interface is ignored"
@@ -215,14 +237,99 @@ class MasterboardData_V30(object):
          md.in_reduced_mode) = struct.unpack_from("!IBiibbddbbddffffBB", buf)
         return md
 
-#this parses JointData for all versions (i.e. 1.6, 1.7, 1.8, 3.0)
+#this parses MasterboardData for versions >=3.0 (i.e. 3.0)
+class MasterboardData_V32(object):
+    __slots__ = ['digital_input_bits', 'digital_output_bits',
+                 'analog_input_range0', 'analog_input_range1',
+                 'analog_input0', 'analog_input1',
+                 'analog_output_domain0', 'analog_output_domain1',
+                 'analog_output0', 'analog_output1',
+                 'masterboard_temperature',
+                 'robot_voltage_48V', 'robot_current',
+                 'master_io_current', 'safety_mode',
+                 'in_reduced_mode', 'euromap67_interface_installed',
+                 'euromap_input_bits', 'euromap_output_bits',
+                 'euromap_voltage', 'euromap_current',
+                 'operation_mode_selector_input',
+                 'three_position_enabling_device_input'
+                 ]#subsequent slots related to 'euromap' ignored
+    @staticmethod
+    def unpack(buf):
+        md = MasterboardData_V32()
+        (plen, ptype) = struct.unpack_from("!IB", buf)
+        
+        if plen == 74:
+            (_, _,
+             md.digital_input_bits, md.digital_output_bits,
+             md.analog_input_range0, md.analog_input_range1,
+             md.analog_input0, md.analog_input1,
+             md.analog_output_domain0, md.analog_output_domain1,
+             md.analog_output0, md.analog_output1,
+             md.masterboard_temperature,
+             md.robot_voltage_48V, md.robot_current,
+             md.master_io_current, md.safety_mode,
+             md.in_reduced_mode, md.euromap67_interface_installed,
+             _, md.operation_mode_selector_input,
+             md.three_position_enabling_device_input
+             ) = struct.unpack_from("!IBiibbddbbddffffBBBIBB", buf)
+        else:
+            (_, _,
+             md.digital_input_bits, md.digital_output_bits,
+             md.analog_input_range0, md.analog_input_range1,
+             md.analog_input0, md.analog_input1,
+             md.analog_output_domain0, md.analog_output_domain1,
+             md.analog_output0, md.analog_output1,
+             md.masterboard_temperature,
+             md.robot_voltage_48V, md.robot_current,
+             md.master_io_current, md.safety_mode,
+             md.in_reduced_mode, md.euromap67_interface_installed,
+             md.euromap_input_bits, md.euromap_output_bits,
+             md.euromap_voltage, md.euromap_current,
+             _, md.operation_mode_selector_input,
+             md.three_position_enabling_device_input
+             ) = struct.unpack_from("!IBiibbddbbddffffBBBIIffIBB", buf)
+            
+        
+        return md
+       
+#
+#this parses JointData for all versions
 class CartesianInfo(object):
-    __slots__ = ['x', 'y', 'z', 'rx', 'ry', 'rz']
     @staticmethod
     def unpack(buf):
         ci = CartesianInfo()
+        (plen, ptype) = struct.unpack_from("!IB", buf)
+        if plen == 53:
+            return CartesianInfo_V16.unpack(buf)
+        elif plen == 101:
+            return CartesianInfo_V31.unpack(buf)
+        else:
+            print "CartesianInfo has wrong length: " + str(plen)
+            return ci
+
+#this parses JointData for 1.6, 1.7, 1.8, 3.0
+class CartesianInfo_V16(object):
+    __slots__ = ['x', 'y', 'z', 'rx', 'ry', 'rz']
+    @staticmethod
+    def unpack(buf):
+        ci = CartesianInfo_V16()
         (_, _,
          ci.x, ci.y, ci.z, ci.rx, ci.ry, ci.rz) = struct.unpack_from("!IB6d", buf)
+        return ci
+
+#this parses JointData for 3.1
+class CartesianInfo_V31(object):
+    __slots__ = ['x', 'y', 'z', 'rx', 'ry', 'rz',
+                 'tcp_offset_x', 'tcp_offset_y', 'tcp_offset_z',
+                 'tcp_offset_rx', 'tcp_offset_ry', 'tcp_offset_rz']
+    @staticmethod
+    def unpack(buf):
+        ci = CartesianInfo_V31()
+        (_, _,
+         ci.x, ci.y, ci.z, ci.rx, ci.ry, ci.rz, 
+         ci.tcp_offset_x, ci.tcp_offset_y, ci.tcp_offset_z,
+         ci.tcp_offset_rx, ci.tcp_offset_ry, ci.tcp_offset_rz
+         ) = struct.unpack_from("!IB12d", buf)
         return ci
 
 #this parses KinematicsInfo for versions (i.e. 1.8, 3.0)
@@ -281,6 +388,8 @@ class AdditionalInfo(object):
             return AdditionalInfoOld.unpack(buf)
         elif plen == 7:
             return AdditionalInfoNew.unpack(buf)
+        elif plen == 8:
+            return AdditionalInfo_V32.unpack(buf)
         else:
             print "AdditionalInfo has wrong length: " + str(plen)
             return ai
@@ -298,7 +407,19 @@ class AdditionalInfoNew(object):
     @staticmethod
     def unpack(buf):
         ai = AdditionalInfoNew()
-        (_,_,ai.teach_button_enabled, ai.teach_button_pressed) = struct.unpack_from("!IBBB", buf)
+        (_,_,ai.teach_button_enabled, ai.teach_button_pressed
+        ) = struct.unpack_from("!IBBB", buf)
+        return ai
+        
+class AdditionalInfo_V32(object):
+    __slots__ = ['teach_button_enabled','teach_button_pressed',
+                 'io_enabled_freedrive']
+    @staticmethod
+    def unpack(buf):
+        ai = AdditionalInfo_V32()
+        (_,_,ai.teach_button_enabled, ai.teach_button_pressed,
+         ai.io_enabled_freedrive
+         ) = struct.unpack_from("!IBBBB", buf)
         return ai
 
 

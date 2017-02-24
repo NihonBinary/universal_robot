@@ -419,22 +419,23 @@ class RobotStateRT_V30(object):
         
         return rs
 
-#this parses RobotStateRT for versions >=3.2
+#this parses RobotStateRT for versions >=3.2 (i.e. 3.2)
 class RobotStateRT_V32(object):
-    __slots__ = ['time',
-                 'q_target', 'qd_target', 'qdd_target', 'i_target', 'm_target',
-                 'q_actual', 'qd_actual', 'i_actual', 'i_control',
-                 'tool_vector_actual', 'tcp_speed_actual', 'tcp_force',
-                 'tool_vector_target', 'tcp_speed_target',
-                 'digital_input_bits', 'motor_temperatures', 'controller_timer',
-                 'test_value',
-                 'robot_mode', 'joint_modes', 'safety_mode',
+    __slots__ = ['time', 
+                 'q_target', 'qd_target', 'qdd_target', 'i_target', 'm_target', 
+                 'q_actual', 'qd_actual', 'i_actual', 'i_control', 
+                 'tool_vector_actual', 'tcp_speed_actual', 'tcp_force', 
+                 'tool_vector_target', 'tcp_speed_target', 
+                 'digital_input_bits', 'motor_temperatures', 'controller_timer', 
+                 'test_value', 
+                 'robot_mode', 'joint_modes', 'safety_mode', 
                  #6xd: unused
-                 'tool_acc_values',
+                 'tool_acc_values', 
                  #6xd: unused
-                 'speed_scaling', 'linear_momentum_norm',
+                 'speed_scaling', 'linear_momentum_norm', 
                  #2xd: unused
-                 'v_main', 'v_robot', 'i_robot', 'v_actual', 'digital_outputs', 'program_state']
+                 'v_main', 'v_robot', 'i_robot', 'v_actual',
+                 'digital_outputs', 'program_state']
 
     @staticmethod
     def unpack(buf):
@@ -449,51 +450,52 @@ class RobotStateRT_V32(object):
         #time: 1x double (1x 8byte)
         rs.time = struct.unpack_from("!d",buf, offset)[0]
         offset+=8
-
+        
         #q_target: 6x double (6x 8byte)
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.q_target = copy.deepcopy(all_values)
-
+        
         #qd_target: 6x double (6x 8byte)
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.qd_target = copy.deepcopy(all_values)
+        
         #qdd_target: 6x double (6x 8byte)
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.qdd_target = copy.deepcopy(all_values)
-
-        #i_target: 6x double (6x 8byte)
+        
+        #i_target: 6x double (6x 8byte) 
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.i_target = copy.deepcopy(all_values)
-
+        
         #m_target: 6x double (6x 8byte)
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.m_target = copy.deepcopy(all_values)
-
+        
         #q_actual: 6x double (6x 8byte)
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.q_actual = copy.deepcopy(all_values)
-
+        
         #qd_actual: 6x double (6x 8byte)
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.qd_actual = copy.deepcopy(all_values)
-
+        
         #i_actual: 6x double (6x 8byte)
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.i_actual = copy.deepcopy(all_values)
-
+        
         #i_control: 6x double (6x 8byte)
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.i_control = copy.deepcopy(all_values)
-
+        
         #tool_vector_actual: 6x double (6x 8byte)
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
@@ -503,22 +505,22 @@ class RobotStateRT_V32(object):
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.tcp_speed_actual = copy.deepcopy(all_values)
-
+        
         #tcp_force: 6x double (6x 8byte)
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.tcp_force = copy.deepcopy(all_values)
-
+        
         #tool_vector_target: 6x double (6x 8byte)
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.tool_vector_target = copy.deepcopy(all_values)
-
+        
         #tcp_speed_target: 6x double (6x 8byte)
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.tcp_speed_target = copy.deepcopy(all_values)
-
+        
         #digital_input_bits: 1x double (1x 8byte) ?
         rs.digital_input_bits = struct.unpack_from("!d",buf, offset)[0]
         offset+=8
@@ -527,73 +529,74 @@ class RobotStateRT_V32(object):
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.motor_temperatures = copy.deepcopy(all_values)
-
+        
         #controller_timer: 1x double (1x 8byte)
         rs.controller_timer = struct.unpack_from("!d",buf, offset)[0]
         offset+=8
-
+        
         #test_value: 1x double (1x 8byte)
         rs.test_value = struct.unpack_from("!d",buf, offset)[0]
         offset+=8
-
+        
         #robot_mode: 1x double (1x 8byte)
         rs.robot_mode = struct.unpack_from("!d",buf, offset)[0]
         offset+=8
-
+        
         #joint_modes: 6x double (6x 8byte)
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.joint_modes = copy.deepcopy(all_values)
-
+        
         #safety_mode: 1x double (1x 8byte)
         rs.safety_mode = struct.unpack_from("!d",buf, offset)[0]
         offset+=8
-
+        
         #unused: 6x double (6x 8byte)
         offset+=48
-
+        
         #tool_acc_values: 3x double (3x 8byte)
         all_values = list(struct.unpack_from("!ddd",buf, offset))
         offset+=3*8
         rs.tool_acc_values = copy.deepcopy(all_values)
-
+        
         #unused: 6x double (6x 8byte)
         offset+=48
-
+        
         #speed_scaling: 1x double (1x 8byte)
         rs.speed_scaling = struct.unpack_from("!d",buf, offset)[0]
         offset+=8
-
+        
         #linear_momentum_norm: 1x double (1x 8byte)
         rs.linear_momentum_norm = struct.unpack_from("!d",buf, offset)[0]
         offset+=8
-
+        
         #unused: 2x double (2x 8byte)
         offset+=16
-
+        
         #v_main: 1x double (1x 8byte)
         rs.v_main = struct.unpack_from("!d",buf, offset)[0]
         offset+=8
-
+        
         #v_robot: 1x double (1x 8byte)
         rs.v_robot = struct.unpack_from("!d",buf, offset)[0]
         offset+=8
-
+        
         #i_robot: 1x double (1x 8byte)
         rs.i_robot = struct.unpack_from("!d",buf, offset)[0]
         offset+=8
-
+        
         #v_actual: 6x double (6x 8byte)
         all_values = list(struct.unpack_from("!dddddd",buf, offset))
         offset+=6*8
         rs.v_actual = copy.deepcopy(all_values)
-
-        #i_robot: 1x double (1x 8byte)
+ 
+        #digital_outputs: 1x double (1x 8byte)
         rs.digital_outputs = struct.unpack_from("!d",buf, offset)[0]
         offset+=8
-
-        #i_robot: 1x double (1x 8byte)
+        
+        #program_state: 1x double (1x 8byte)
         rs.program_state = struct.unpack_from("!d",buf, offset)[0]
         offset+=8
-
+       
         return rs
+

@@ -183,6 +183,14 @@ class URConnection(object):
         log("Halted")
 
     def __on_packet(self, buf):
+    
+        ### 2017-02-22 temporary solution to support V3.2 and lator
+        length, mtype = struct.unpack_from("!IB", buf)
+        print("Packet Length: ", length, "; Message Type: ", mtype)
+        if mtype != 16:
+            print("Throw A Packet for Message other than ROBOT_STATE(16)")
+            return
+            
         state = RobotState.unpack(buf)
         self.last_state = state
         #import deserialize; deserialize.pstate(self.last_state)
