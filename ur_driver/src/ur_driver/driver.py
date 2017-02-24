@@ -186,9 +186,9 @@ class URConnection(object):
     
         ### 2017-02-22 temporary solution to support V3.2 and lator
         length, mtype = struct.unpack_from("!IB", buf)
-        print("Packet Length: ", length, "; Message Type: ", mtype)
+        #print("Packet Length: ", length, "; Message Type: ", mtype)
         if mtype != 16:
-            print("Throw A Packet for Message other than ROBOT_STATE(16)")
+            print "A Packet thrown -- Message Type: ", mtype
             return
             
         state = RobotState.unpack(buf)
