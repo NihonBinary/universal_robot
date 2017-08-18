@@ -49,7 +49,7 @@ def move_repeated():
     g.trajectory = JointTrajectory()
     g.trajectory.joint_names = JOINT_NAMES
     
-    d = 2.0
+    d = 8.0
     g.trajectory.points = []
     for i in range(10):
         g.trajectory.points.append(

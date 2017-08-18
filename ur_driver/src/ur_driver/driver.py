@@ -254,8 +254,8 @@ class URConnection(object):
         if len(state.unknown_ptypes) > 0:
             state.unknown_ptypes.sort()
             s_unknown_ptypes = [str(ptype) for ptype in state.unknown_ptypes]
-            self.throttle_warn_unknown(1.0, "Ignoring unknown pkt type(s): %s. "
-                          "Please report." % ", ".join(s_unknown_ptypes))
+            #self.throttle_warn_unknown(1.0, "Ignoring unknown pkt type(s): %s. "
+            #              "Please report." % ", ".join(s_unknown_ptypes))
 
     def throttle_warn_unknown(self, period, msg):
         self.__dict__.setdefault('_last_hit', 0.0)
