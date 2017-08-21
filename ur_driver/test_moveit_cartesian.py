@@ -1,6 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+#
+# このサンプルは、以下のURLから参照可能です。
+# http://docs.ros.org/indigo/api/pr2_moveit_tutorials/html/planning/scripts/doc/move_group_python_interface_tutorial.html
+#
+# このコードの実行時にエラーが生じる場合には、以下のパッチをcore.plに適用する必要があります。
+# https://launchpadlibrarian.net/263969718/patch.txt
+#
+#
+
 import sys
 import copy
 import time
