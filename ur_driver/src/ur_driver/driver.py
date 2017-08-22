@@ -237,7 +237,7 @@ class URConnection(object):
         
 
         # Updates the state machine that determines whether we can program the robot.
-        can_execute = (state.robot_mode_data.robot_mode in [RobotMode.READY, RobotMode.RUNNING])
+        can_execute = (state.robot_mode_data.robot_mode == RobotMode.RUNNING)
         if self.robot_state == self.CONNECTED:
             if can_execute:
                 self.__trigger_ready_to_program()
@@ -254,8 +254,8 @@ class URConnection(object):
         if len(state.unknown_ptypes) > 0:
             state.unknown_ptypes.sort()
             s_unknown_ptypes = [str(ptype) for ptype in state.unknown_ptypes]
-            #self.throttle_warn_unknown(1.0, "Ignoring unknown pkt type(s): %s. "
-            #              "Please report." % ", ".join(s_unknown_ptypes))
+            self.throttle_warn_unknown(1.0, "Ignoring unknown pkt type(s): %s. "
+                          "Please report." % ", ".join(s_unknown_ptypes))
 
     def throttle_warn_unknown(self, period, msg):
         self.__dict__.setdefault('_last_hit', 0.0)

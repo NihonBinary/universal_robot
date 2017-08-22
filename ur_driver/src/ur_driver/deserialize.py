@@ -13,17 +13,15 @@ class PackageType(object):
     CALIBRATION_DATA = 9
 
 class RobotMode(object):
-    RUNNING = 0
-    FREEDRIVE = 1
-    READY = 2
-    INITIALIZING = 3
-    SECURITY_STOPPED = 4
-    EMERGENCY_STOPPED = 5
-    FATAL_ERROR = 6
-    NO_POWER = 7
-    NOT_CONNECTED = 8
-    SHUTDOWN = 9
-    SAFEGUARD_STOP = 10
+    DISCONNECTED = 0
+    CONFIRM_SAFETY = 1
+    BOOTING = 2
+    POWER_OFF = 3
+    POWER_ON = 4
+    IDLE = 5
+    BACKDRIVE = 6
+    RUNNING = 7
+    UPDATING_FIRMWARE = 8
 
 class JointMode(object):
     PART_D_CALIBRATION = 237
