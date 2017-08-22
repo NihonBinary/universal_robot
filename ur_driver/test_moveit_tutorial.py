@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 
 #
-# このサンプルは、以下のURLから参照可能です。
+# Origin of this example code can be accessed by following URL:
+# (このサンプルのオリジナルは、以下のURLから参照可能です。)
 # http://docs.ros.org/indigo/api/pr2_moveit_tutorials/html/planning/scripts/doc/move_group_python_interface_tutorial.html
 #
-# このコードの実行時にエラーが生じる場合には、以下のパッチをcore.plに適用する必要があります。
+# The patch in the following URL must be applied if a error has been occurred 
+# when this code will be run.
+# (このコードの実行時にエラーが生じる場合には、以下のパッチをcore.plに適用する必要があります。)
 # https://launchpadlibrarian.net/263969718/patch.txt
-#
 #
 
 import sys
@@ -23,22 +25,24 @@ import moveit_msgs.msg
 import geometry_msgs.msg
 
 
-
-# moveit_commanderとrospyを初期化
+#
+# Initializing moveit_commander and rospy
+# (moveit_commanderとrospyを初期化)
+#
 print "============ Starting tutorial setup"
 moveit_commander.roscpp_initialize(sys.argv)
 rospy.init_node('move_group_python_interface_tutorial', anonymous=True)
 
-#　RobotCommandarオブジェクトをインスタンス化
-# RobotCommandar：ロボット全体へのインターフェイス
+# RobotCommandar： An interface to the robot as a whole.
+# (ロボット全体へのインターフェイス)
 robot = moveit_commander.RobotCommander()
 
-#　PlanningSceneInterfaceオブジェクトをインスタンス化
-#　PlanningSceneInterface:　ロボットの周辺環境へのインターフェイス
+#　PlanningSceneInterface:　An interface to the world srrounding the robot
+# (ロボットの周辺環境へのインターフェイス)
 scene = moveit_commander.PlanningSceneInterface()
 
-#　MoveGroupCommandarオブジェクトをインスタンス化
-#　MoveGroupCommander： ジョイントグループへのインターフェイス
+#　MoveGroupCommandar： An interface to one group of joints
+# (ジョイントグループへのインターフェイス)
 # アームの動作のプランと実行時に使用する
 group = moveit_commander.MoveGroupCommander("manipulator")
 
