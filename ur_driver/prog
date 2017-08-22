@@ -30,43 +30,7 @@ def driverProg():
     socket_send_string("~")
     exit_critical
   end
-
-  def send_out2(m1, m2):
-    enter_critical
-    socket_send_int(MSG_OUT)
-    socket_send_string(m1)
-    socket_send_string(",")
-    socket_send_string(m2)
-    socket_send_string("~")
-    exit_critical
-  end
-
-  def send_out3(m1, m2, m3):
-    enter_critical
-    socket_send_int(MSG_OUT)
-    socket_send_string(m1)
-    socket_send_string(",")
-    socket_send_string(m2)
-    socket_send_string(",")
-    socket_send_string(m3)
-    socket_send_string("~")
-    exit_critical
-  end
-
-  def send_out4(m1, m2, m3, m4):
-    enter_critical
-    socket_send_int(MSG_OUT)
-    socket_send_string(m1)
-    socket_send_string(",")
-    socket_send_string(m2)
-    socket_send_string(",")
-    socket_send_string(m3)
-    socket_send_string(",")
-    socket_send_string(m4)
-    socket_send_string("~")
-    exit_critical
-  end
- 
+  
   def send_waypoint_finished(waypoint_id):
     enter_critical
     socket_send_int(MSG_WAYPOINT_FINISHED)
@@ -77,10 +41,10 @@ def driverProg():
   
   SERVO_IDLE = 0
   SERVO_RUNNING = 1
-  global cmd_servo_state = SERVO_IDLE
-  global cmd_servo_id = 0  # 0 = idle, -1 = stop
-  global cmd_servo_q = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-  global cmd_servo_dt = 0.0
+  cmd_servo_state = SERVO_IDLE
+  cmd_servo_id = 0  # 0 = idle, -1 = stop
+  cmd_servo_q = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  cmd_servo_dt = 0.0
   def set_servo_setpoint(id, q, dt):
     enter_critical
     cmd_servo_state = SERVO_RUNNING
@@ -90,17 +54,17 @@ def driverProg():
     exit_critical
   end
   thread servoThread():
-    global state = SERVO_IDLE
+    state = SERVO_IDLE
     while True:
       # Latches the new command
       enter_critical
-      global q = cmd_servo_q
-      global dt = cmd_servo_dt
-      global id = cmd_servo_id
-      global do_brake = False
+      q = cmd_servo_q
+      dt = cmd_servo_dt
+      id = cmd_servo_id
+      do_brake = False
       if (state == SERVO_RUNNING) and (cmd_servo_state == SERVO_IDLE):
         # No command pending
-        global do_brake = True
+        do_brake = True
       end
       state = cmd_servo_state
       cmd_servo_state = SERVO_IDLE
@@ -115,7 +79,7 @@ def driverProg():
         sync()
       elif state == SERVO_RUNNING:
         servoj(q, 0, 0, dt)
-        send_out3("Servoed", dt, q)
+        #send_out("Servoed")
       else:
         #send_out("Idle")
         sync()
@@ -148,7 +112,7 @@ def driverProg():
     
     if ll[0] == 0:
       #send_out("Received nothing")
-      sleep(0.001)
+      sleep(0.001)  #to privent infinity looping
     elif ll[0] > 1:
       send_out("Received too many things")
     else:
@@ -182,7 +146,6 @@ def driverProg():
         send_waypoint_finished(waypoint_id)
         send_out("movej finished")
       elif mtype == MSG_SERVOJ:
-        send_out("Received servoj")
         # Reads the parameters
         params_servoj = socket_read_binary_integer(1+6+1)
         if params_servoj[0] == 0:
@@ -198,8 +161,7 @@ def driverProg():
                    params_servoj[6] / MULT_jointstate,
                    params_servoj[7] / MULT_jointstate]
         t = params_servoj[8] / MULT_time
-        send_out4(waypoint_id, t, q, get_actual_joint_positions())
-       
+        
         # Servos
         #servoj(q, 3, 0.1, t)
         #send_waypoint_finished(waypoint_id)
