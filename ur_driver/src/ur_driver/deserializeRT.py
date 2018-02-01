@@ -1,10 +1,13 @@
 import struct
 import copy
 
+show_warning = True
+
 #this class handles different protocol versions
 class RobotStateRT(object):
     @staticmethod
     def unpack(buf):
+        global show_warning
         rs = RobotStateRT()
         (plen, ptype) = struct.unpack_from("!IB", buf)
         if plen == 756:
@@ -16,8 +19,13 @@ class RobotStateRT(object):
         elif plen == 1060:
             return RobotStateRT_V32.unpack(buf)
         else:
-            print "RobotStateRT has wrong length: " + str(plen)
-            return rs
+            if(show_warning):
+                print " *** WARNING *** : RobotStateRT has wrong length: " + str(plen)
+                print " *** WARNING *** : RobotStateRT need to be updated!!"
+                print " *** WARNING *** : Use latest RobotStateRT for now..."
+                show_warning = False
+            return RobotStateRT_V32.unpack(buf)
+            #return rs
 
 #this parses RobotStateRT for versions = v1.5
 #http://wiki03.lynero.net/Technical/RealTimeClientInterface?foswiki_redirect_cache=9b4574b30760f720c6f79c5f1f2203dd

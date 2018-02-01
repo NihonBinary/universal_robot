@@ -67,9 +67,11 @@ class MasterOnOffState(object):
     TURNING_OFF = 3
 
 #this class handles different protocol versions
+show_warning_robot_mode_data = True
 class RobotModeData(object):
     @staticmethod
     def unpack(buf):
+        global show_warning_robot_mode_data
         rmd = RobotModeData()
         (plen, ptype) = struct.unpack_from("!IB", buf)
         if plen == 29:
@@ -79,8 +81,13 @@ class RobotModeData(object):
         elif plen == 46:
             return RobotModeData_V32.unpack(buf)
         else:
-            print "RobotModeData has wrong length: " + str(plen)
-            return rmd
+            if show_warning_robot_mode_data:
+                print " *** WARNING *** : RobotModeData has wrong length: " + str(plen)
+                print " *** WARNING *** : RobotModeData need to be updated!!"
+                print " *** WARNING *** : Use latest RobotModeData for now..."
+                show_warning_robot_mode_data = False
+            return RobotModeData_V32.unpack(buf)
+            #return rmd
 
 #this parses RobotModeData for versions <= v1.8 (i.e. 1.6, 1.7, 1.8)
 class RobotModeData_V18(object):

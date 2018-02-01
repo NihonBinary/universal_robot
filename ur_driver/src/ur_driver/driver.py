@@ -125,6 +125,8 @@ class URConnection(object):
     CONNECTED = 1
     READY_TO_PROGRAM = 2
     EXECUTING = 3
+
+    show_warning_unknown_pkt_type = {}
     
     def __init__(self, hostname, port, program):
         self.__thread = None
@@ -250,12 +252,17 @@ class URConnection(object):
                 self.__trigger_halted()
                 self.robot_state = self.CONNECTED
 
-        # Report on any unknown packet types that were received
-        if len(state.unknown_ptypes) > 0:
-            state.unknown_ptypes.sort()
-            s_unknown_ptypes = [str(ptype) for ptype in state.unknown_ptypes]
-            self.throttle_warn_unknown(1.0, "Ignoring unknown pkt type(s): %s. "
-                          "Please report." % ", ".join(s_unknown_ptypes))
+        # Report any unknown packet types that were received
+        for pkt_type in state.unknown_ptypes:
+            if pkt_type not in self.show_warning_unknown_pkt_type:
+                rospy.logwarn(" *** WARNING *** : Unknown pkt type : %d : May be newer SW than we support. Ignore it for now..." % pkt_type)
+                self.show_warning_unknown_pkt_type[pkt_type] = True
+
+        # if len(state.unknown_ptypes) > 0:
+        #     state.unknown_ptypes.sort()
+        #     s_unknown_ptypes = [str(ptype) for ptype in state.unknown_ptypes]
+        #     self.throttle_warn_unknown(1.0, " *** WARNING *** : Ignoring unknown pkt type(s): %s. "
+        #                   "Please report." % ", ".join(s_unknown_ptypes))
 
     def throttle_warn_unknown(self, period, msg):
         self.__dict__.setdefault('_last_hit', 0.0)
