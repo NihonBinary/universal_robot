@@ -78,7 +78,7 @@ class RobotModeData(object):
             return RobotModeData_V18.unpack(buf)
         elif plen == 38:
             return RobotModeData_V30.unpack(buf)
-        elif plen == 46:
+        elif plen == 46 or plen == 47:
             return RobotModeData_V32.unpack(buf)
         else:
             if show_warning_robot_mode_data:
@@ -183,7 +183,7 @@ class MasterboardData(object):
             return MasterboardData_V18.unpack(buf)
         elif (plen == 72) or (plen == 92): # Euromap67 interface = 20 bytes <- Isn't it 16??
             return MasterboardData_V30.unpack(buf)
-        elif (plen == 74) or (plen == 94): # Euromap67 interface = 20 bytes <- Isn't it 16??
+        elif (plen == 74) or (plen == 75) or (plen == 94)or (plen == 95): # Euromap67 interface = 20 bytes <- Isn't it 16??
             return MasterboardData_V32.unpack(buf)
         else:
             print "MasterboardData has wrong length: " + str(plen)
@@ -263,7 +263,7 @@ class MasterboardData_V32(object):
         md = MasterboardData_V32()
         (plen, ptype) = struct.unpack_from("!IB", buf)
         
-        if plen == 74:
+        if plen == 74 or  plen == 75:
             (_, _,
              md.digital_input_bits, md.digital_output_bits,
              md.analog_input_range0, md.analog_input_range1,
@@ -393,7 +393,7 @@ class AdditionalInfo(object):
             return AdditionalInfoOld.unpack(buf)
         elif plen == 7:
             return AdditionalInfoNew.unpack(buf)
-        elif plen == 8:
+        elif plen == 8 or plen == 9:
             return AdditionalInfo_V32.unpack(buf)
         else:
             print "AdditionalInfo has wrong length: " + str(plen)
